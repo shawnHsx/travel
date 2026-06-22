@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开封三日游 · 宋韵古都浪漫之旅</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --primary-light: #A0522D;
+            --accent: #D4A574;
+            --bg-cream: #FAF7F2;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C2416;
+            --text-medium: #5C4A3A;
+            --text-light: #8B7355;
+            --border: #E8DFD3;
+            --shadow: 0 4px 20px rgba(139, 69, 19, 0.08);
+            --shadow-hover: 0 8px 30px rgba(139, 69, 19, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            max-width: 480px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #6B3410 100%);
+            color: #FFF8F0;
+            padding: 40px 24px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: "宋";
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 120px;
+            font-family: "STKaiti", "KaiTi", serif;
+            color: rgba(255, 248, 240, 0.08);
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-tag {
+            display: inline-block;
+            background: rgba(255, 248, 240, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 248, 240, 0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .meta-icon {
+            font-size: 16px;
+        }
+
+        .section {
+            padding: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .day-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .day-card:active {
+            transform: scale(0.98);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .day-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .day-date {
+            font-size: 12px;
+            color: var(--text-light);
+            background: var(--bg-cream);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .day-theme {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .day-activities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .activity-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--bg-cream);
+            color: var(--text-medium);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--border));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -22px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 0 3px var(--bg-cream);
+        }
+
+        .timeline-time {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-location {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .timeline-activity {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+        }
+
+        .timeline-note {
+            font-size: 12px;
+            color: var(--text-light);
+            background: var(--bg-cream);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .scenic-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .scenic-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .scenic-info {
+            padding: 16px;
+        }
+
+        .scenic-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .scenic-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .scenic-rating {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        .scenic-desc {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        .map-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        #mapContainer {
+            width: 100%;
+            height: 400px;
+        }
+
+        .map-legend {
+            padding: 12px 16px;
+            background: var(--bg-cream);
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .transport-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .transport-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .transport-info {
+            flex: 1;
+        }
+
+        .transport-route {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .transport-detail {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .food-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            border-left: 3px solid #FF6B35;
+        }
+
+        .food-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .food-info {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .food-recommend {
+            font-size: 12px;
+            color: var(--text-medium);
+            background: var(--bg-cream);
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .hotel-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .tips-list {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .tips-item {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tips-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tips-item::before {
+            content: "•";
+            color: var(--accent);
+            position: absolute;
+            left: 6px;
+            font-weight: bold;
+        }
+
+        .amap-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: #FFF8F0;
+            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-light);
+            font-size: 12px;
+            background: var(--bg-cream);
+        }
+
+        .weather-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        @media print {
+            body {
+                max-width: 100%;
+            }
+            .header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <span class="header-tag">✦ 宋韵古都 · 浪漫双人游 ✦</span>
+            <h1>开封三日游</h1>
+            <p class="header-subtitle">一梦千年汴梁城，与君共赏宋时月</p>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span>2025.07.03 - 07.05</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">🌤️</span>
+                    <span>阴转多云 19-30℃</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">👫</span>
+                    <span>双人浪漫之旅</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section">
+        <h2 class="section-title">每日概览</h2>
+        <div class="overview-grid">
+            <div class="day-card">
+                <div class="day-header">
+                    <span class="day-title">Day 1 · 梦回大宋</span>
+                    <span class="day-date">7月3日 周四</span>
+                </div>
+                <p class="day-theme">"一朝步入画卷，一日梦回千年"</p>
+                <div class="day-activities">
+                    <span class="activity-tag">🏨 入住酒店</span>
+                    <span class="activity-tag">🏯 清明上河园</span>
+                    <span class="activity-tag">🎭 东京梦华演出</span>
+                    <span class="activity-tag">🍜 夜游品美食</span>
+                </div>
+                <div class="weather-badge">🌤️ 阴 28℃/20℃</div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <span class="day-title">Day 2 · 皇城探秘</span>
+                    <span class="day-date">7月4日 周五</span>
+                </div>
+                <p class="day-theme">"龙亭俯瞰汴京景，包公断案显英明"</p>
+                <div class="day-activities">
+                    <span class="activity-tag">🏯 龙亭景区</span>
+                    <span class="activity-tag">🛍️ 宋都御街</span>
+                    <span class="activity-tag">⚖️ 开封府</span>
+                    <span class="activity-tag">🍢 鼓楼夜市</span>
+                </div>
+                <div class="weather-badge">🌤️ 阴 30℃/19℃</div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <span class="day-title">Day 3 · 禅意古塔</span>
+                    <span class="day-date">7月5日 周六</span>
+                </div>
+                <p class="day-theme">"相国寺内听梵音，铁塔巍峨映汴城"</p>
+                <div class="day-activities">
+                    <span class="activity-tag">🛕 大相国寺</span>
+                    <span class="activity-tag">🗼 铁塔公园</span>
+                    <span class="activity-tag">🛒 特产采购</span>
+                    <span class="activity-tag">🚄 返程</span>
+                </div>
+                <div class="weather-badge">⛅ 阴转多云 30℃/20℃</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Day 1 详细行程</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">10:00 - 11:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🏨 开封清明上河园客栈</div>
+                    <div class="timeline-activity">抵达开封，办理入住，稍作休息</div>
+                    <div class="timeline-note">📍 龙亭西路5号 | 建议选择景区内客栈，方便夜游</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">12:00 - 13:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🍜 第一楼灌汤包</div>
+                    <div class="timeline-activity">午餐：品尝开封名吃灌汤包</div>
+                    <div class="timeline-note">📍 寺后街8号 | 人均60元 | 推荐：灌汤包、桶子鸡</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">14:00 - 18:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🏯 清明上河园</div>
+                    <div class="timeline-activity">游览大型宋代主题公园，体验"一朝步入画卷"</div>
+                    <div class="timeline-note">📍 龙亭西路5号 | 门票120元 | AAAAA景区 | 09:00-22:00</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">18:30 - 19:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🍽️ 孙羊正店</div>
+                    <div class="timeline-activity">晚餐：园内宋代风格餐厅用餐</div>
+                    <div class="timeline-note">📍 园内虹桥附近 | 人均80元 | 体验宋代市井美食</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">20:00 - 21:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🎭 《大宋·东京梦华》实景演出</div>
+                    <div class="timeline-activity">观赏大型水上实景演出，震撼视听盛宴</div>
+                    <div class="timeline-note">📍 园内景龙湖 | 门票249元起 | 建议提前预订A区</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Day 2 详细行程</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">08:00 - 09:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🥟 酒店早餐</div>
+                    <div class="timeline-activity">享用早餐，准备出发</div>
+                    <div class="timeline-note">💡 建议早出发，避开人流高峰</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">09:00 - 11:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🏯 龙亭景区</div>
+                    <div class="timeline-activity">登龙亭大殿，俯瞰潘杨二湖，感受皇家气派</div>
+                    <div class="timeline-note">📍 龙亭北路 | 门票35元 | AAAA景区 | 08:00-20:30</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">11:30 - 13:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🛍️ 宋都御街</div>
+                    <div class="timeline-activity">漫步宋代风格商业街，午餐+购物</div>
+                    <div class="timeline-note">📍 中山路北段 | 免费 | 推荐汴绣、花生糕</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">14:00 - 17:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">⚖️ 开封府</div>
+                    <div class="timeline-activity">参观包公办公地，观看"开衙仪式"表演</div>
+                    <div class="timeline-note">📍 延庆街7号 | 门票60元 | AAAA景区 | 07:30-22:00</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">18:00 - 21:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🍢 鼓楼夜市</div>
+                    <div class="timeline-activity">逛开封最负盛名的夜市，品尝各色小吃</div>
+                    <div class="timeline-note">📍 鼓楼街 | 人均50元 | 推荐：炒凉粉、杏仁茶、黄焖鱼</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Day 3 详细行程</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">08:30 - 09:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🥐 早餐 + 退房</div>
+                    <div class="timeline-activity">酒店早餐，办理退房手续</div>
+                    <div class="timeline-note">💡 行李可寄存酒店或车站</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">09:30 - 11:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🛕 大相国寺</div>
+                    <div class="timeline-activity">参观千年古刹，聆听梵乐，祈福许愿</div>
+                    <div class="timeline-note">📍 自由路西段36号 | 门票45元 | 07:30-17:30</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">12:00 - 13:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🍽️ 寺前街小吃</div>
+                    <div class="timeline-activity">午餐：品尝周边特色小吃</div>
+                    <div class="timeline-note">📍 大相国寺附近 | 推荐：胡辣汤、水煎包</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">13:30 - 15:30</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🗼 铁塔公园</div>
+                    <div class="timeline-activity">观赏"天下第一塔"，游览园林景观</div>
+                    <div class="timeline-note">📍 北门大街210号 | 门票40元 | AAAA景区</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">16:00 - 17:00</div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🛒 特产采购</div>
+                    <div class="timeline-activity">购买开封特产伴手礼</div>
+                    <div class="timeline-note">推荐：花生糕、汴绣、朱仙镇木版年画</div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">17:30 - </div>
+                <div class="timeline-content">
+                    <div class="timeline-location">🚄 开封北站/开封站</div>
+                    <div class="timeline-activity">结束愉快旅程，返程</div>
+                    <div class="timeline-note">💡 建议提前1小时到达车站</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">景区风采</h2>
+
+        <div class="scenic-card">
+            <img class="scenic-image" src="http://store.is.autonavi.com/showpic/2df66c8b685d1adeffcf052e1819be23" alt="清明上河园">
+            <div class="scenic-info">
+                <div class="scenic-name">🏯 清明上河园</div>
+                <div class="scenic-meta">
+                    <span class="scenic-rating">⭐ 4.8</span>
+                    <span>AAAAA景区</span>
+                    <span>🎫 ¥120</span>
+                    <span>🕐 09:00-22:00</span>
+                </div>
+                <p class="scenic-desc">以《清明上河图》为蓝本建造的大型宋代文化实景主题公园，再现古都汴京千年繁华胜景。夜间的《大宋·东京梦华》实景演出不容错过。</p>
+            </div>
+        </div>
+
+        <div class="scenic-card">
+            <img class="scenic-image" src="http://store.is.autonavi.com/showpic/49aad1ca5e17a5e21d891e43623e7a38" alt="龙亭景区">
+            <div class="scenic-info">
+                <div class="scenic-name">🏯 龙亭景区</div>
+                <div class="scenic-meta">
+                    <span class="scenic-rating">⭐ 4.7</span>
+                    <span>AAAA景区</span>
+                    <span>🎫 ¥35</span>
+                    <span>🕐 08:00-20:30</span>
+                </div>
+                <p class="scenic-desc">开封古城的核心，建于北宋皇宫遗址之上。登临龙亭大殿，可俯瞰潘杨二湖，感受"皇家园林"的恢弘气势。</p>
+            </div>
+        </div>
+
+        <div class="scenic-card">
+            <img class="scenic-image" src="http://store.is.autonavi.com/showpic/17352aadd0171ea30a8376e43a7d0ec1" alt="开封府">
+            <div class="scenic-info">
+                <div class="scenic-name">⚖️ 开封府</div>
+                <div class="scenic-meta">
+                    <span class="scenic-rating">⭐ 4.7</span>
+                    <span>AAAA景区</span>
+                    <span>🎫 ¥60</span>
+                    <span>🕐 07:30-22:00</span>
+                </div>
+                <p class="scenic-desc">北宋天下首府，包公办公之地。威严的建筑群与精彩的"开衙仪式"、"包公断案"等表演，让人穿越回大宋盛世。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">行程地图</h2>
+        <div class="map-container">
+            <iframe src="https://uri.amap.com/marker?position=114.340685,34.809044&name=清明上河园&src=开封三日游&coordinate=wgs84&callnative=0&zoom=13" 
+                    width="100%" 
+                    height="400" 
+                    frameborder="0" 
+                    style="border:0; display:block;">
+            </iframe>
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8B4513;"></div>
+                    <span>Day 1：清明上河园（梦回大宋）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #D4A574;"></div>
+                    <span>Day 2：龙亭→宋都御街→开封府→鼓楼夜市</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF6B35;"></div>
+                    <span>Day 3：大相国寺→铁塔公园</span>
+                </div>
+            </div>
+        </div>
+        <a class="amap-btn" href="https://uri.amap.com/marker?position=114.340685,34.809044&name=清明上河园&src=开封三日游&coordinate=wgs84&callnative=1">在高德地图App中查看</a>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">交通信息</h2>
+
+        <div class="transport-card">
+            <div class="transport-icon">🚄</div>
+            <div class="transport-info">
+                <div class="transport-route">抵达开封</div>
+                <div class="transport-detail">高铁：开封北站 | 普铁：开封站 | 建议高铁出行，更便捷</div>
+            </div>
+        </div>
+
+        <div class="transport-card">
+            <div class="transport-icon">🚕</div>
+            <div class="transport-info">
+                <div class="transport-route">市内交通</div>
+                <div class="transport-detail">景点集中，打车10-20元可达；公交1-2元；建议打车+步行</div>
+            </div>
+        </div>
+
+        <div class="transport-card">
+            <div class="transport-icon">🚶</div>
+            <div class="transport-info">
+                <div class="transport-route">景区间步行</div>
+                <div class="transport-detail">清明上河园↔龙亭：步行10分钟 | 龙亭↔开封府：打车8分钟</div>
+            </div>
+        </div>
+
+        <div class="transport-card">
+            <div class="transport-icon">🚌</div>
+            <div class="transport-info">
+                <div class="transport-route">旅游专线</div>
+                <div class="transport-detail">旅游巴士专线3号线串联主要景点，票价2元</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">美食推荐</h2>
+
+        <div class="food-card">
+            <div class="food-name">🥟 第一楼灌汤包</div>
+            <div class="food-info">📍 寺后街8号 | ⏰ 10:00-21:00 | 💰 人均60元</div>
+            <div class="food-recommend">推荐：小笼灌汤包、桶子鸡、鲤鱼焙面 | 开封必吃名店</div>
+        </div>
+
+        <div class="food-card">
+            <div class="food-name">🍢 鼓楼夜市</div>
+            <div class="food-info">📍 鼓楼街 | ⏰ 18:00-凌晨 | 💰 人均50元</div>
+            <div class="food-recommend">推荐：炒凉粉、杏仁茶、黄焖鱼、羊肉炕馍 | 千年夜市风情</div>
+        </div>
+
+        <div class="food-card">
+            <div class="food-name">🍜 西司广场夜市</div>
+            <div class="food-info">📍 丁角街 | ⏰ 18:00-凌晨 | 💰 人均40元</div>
+            <div class="food-recommend">推荐：胡辣汤、水煎包、炒红薯泥 | 本地人常去</div>
+        </div>
+
+        <div class="food-card">
+            <div class="food-name">🍽️ 孙羊正店</div>
+            <div class="food-info">📍 清明上河园内 | ⏰ 11:00-20:00 | 💰 人均80元</div>
+            <div class="food-recommend">推荐：宋代风味菜、汴京烤鸭 | 沉浸式宋代用餐体验</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">住宿推荐</h2>
+
+        <div class="hotel-card">
+            <div class="food-name" style="color: var(--primary);">🏨 开封清明上河园客栈</div>
+            <div class="food-info" style="margin: 8px 0;">📍 龙亭西路5号（迎宾门游客服务中心内）</div>
+            <div class="food-info" style="margin-bottom: 8px;">💰 约400-600元/晚 | ⭐ 特色主题客栈</div>
+            <div class="food-recommend">💡 推荐理由：位于景区内，方便夜游和观看演出，宋代风格装修，沉浸式体验</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">实用信息</h2>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icon">🚨</div>
+                <div class="info-label">报警电话</div>
+                <div class="info-value">110</div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🚑</div>
+                <div class="info-label">急救电话</div>
+                <div class="info-value">120</div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🚓</div>
+                <div class="info-label">交通事故</div>
+                <div class="info-value">122</div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">📞</div>
+                <div class="info-label">旅游投诉</div>
+                <div class="info-value">12301</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">注意事项</h2>
+        <div class="tips-list">
+            <div class="tips-item">天气较热（19-30℃），注意防晒补水，携带遮阳帽和防晒霜</div>
+            <div class="tips-item">《大宋·东京梦华》演出需提前1-2天预订，建议选择A区或B区位置</div>
+            <div class="tips-item">景区内消费较高，可自带饮用水和零食</div>
+            <div class="tips-item">夜市人多拥挤，注意保管好随身物品</div>
+            <div class="tips-item">开封景点集中，建议穿舒适的运动鞋</div>
+            <div class="tips-item">学生证、军官证等可享受景区门票优惠</div>
+            <div class="tips-item">建议提前购买返程车票，暑期为旅游旺季</div>
+            <div class="tips-item">拍摄汉服写真推荐清明上河园和龙亭，景色优美</div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>✦ 开封三日游 · 宋韵古都浪漫之旅 ✦</p>
+        <p style="margin-top: 8px;">愿你们在汴梁古城，留下最美的回忆</p>
+        <p style="margin-top: 12px; font-size: 11px; opacity: 0.7;">行程规划由智能助手生成 | 2025.07</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.day-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+
+</body>
+</html>
